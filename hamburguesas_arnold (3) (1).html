@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamburguesas Arnold - Men煤 Virtual</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFE5B4, #FFB347, #FF9A52);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FF9A52, #FF6B1A);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .address {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FFE5B4, #FFD700);
+            border: none;
+            color: #333;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .cart-btn {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #FF0000;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .menu-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 229, 180, 0.5));
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: #FF6B1A;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .menu-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 235, 205, 0.8));
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border-color: #FFB347;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .item-name {
+            color: #FF6B1A;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .item-price {
+            color: #2E8B57;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .item-description {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            background: linear-gradient(135deg, #32CD32, #228B22);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #FFE5B4, #FFECD1);
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #FF6B1A;
+        }
+
+        .cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 1rem 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            border-bottom: 1px solid #FFB347;
+            margin-bottom: 0.5rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            background: #FF6B1A;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            color: #2E8B57;
+        }
+
+        .form-group {
+            margin: 1rem 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #FF6B1A;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #FFB347;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .payment-details {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .order-number {
+            background: linear-gradient(135deg, #32CD32, #228B22);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>馃崝 Hamburguesas Arnold</h1>
+                <div class="address">Av. Jorge Luque Loyola esquina con Laguna de San Crist贸bal</div>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn" onclick="showLogin()">Iniciar Sesi贸n</button>
+                <button class="btn cart-btn" onclick="showCart()">
+                    馃洅 Carrito
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- HAMBURGUESAS DE CARNE -->
+        <div class="menu-section">
+            <h2 class="section-title">馃ォ HAMBURGUESAS DE CARNE</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">SENCILLA</div>
+                        <div class="item-price">$42</div>
+                    </div>
+                    <div class="item-description">Carne, cebolla, lechuga, jitomate, pepinillos, catsup, mostaza, picante, queso amarillo, jam贸n, mayonesa, queso</div>
+                    <button class="add-to-cart" onclick="addToCart('SENCILLA', 42, 'Hamburguesa de carne sencilla')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">HAWAIANA</div>
+                        <div class="item-price">$50</div>
+                    </div>
+                    <div class="item-description">Carne, pi帽a, catsup, mostaza, queso amarillo, queso oaxaca, jam贸n, mayonesa, queso</div>
+                    <button class="add-to-cart" onclick="addToCart('HAWAIANA', 50, 'Hamburguesa hawaiana con pi帽a')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">ARNOLD</div>
+                        <div class="item-price">$50</div>
+                    </div>
+                    <div class="item-description">Carne, mostaza, picante, cebolla, lechuga, jitomate, pepinillos, jam贸n, mayonesa, queso</div>
+                    <button class="add-to-cart" onclick="addToCart('ARNOLD', 50, 'Hamburguesa Arnold especial')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">QUESOS</div>
+                        <div class="item-price">$60</div>
+                    </div>
+                    <div class="item-description">Carne, catsup, mostaza, picante, queso amarillo, queso oaxaca, jam贸n, mayonesa, queso, lechuga, jitomate, pepinillos</div>
+                    <button class="add-to-cart" onclick="addToCart('QUESOS', 60, 'Hamburguesa con m煤ltiples quesos')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">TOCINO Y QUESILLO</div>
+                        <div class="item-price">$66</div>
+                    </div>
+                    <div class="item-description">Carne, tocino, catsup, mostaza, picante, cebolla, lechuga, jitomate, pepinillos, queso amarillo, queso oaxaca, jam贸n, mayonesa, queso</div>
+                    <button class="add-to-cart" onclick="addToCart('TOCINO Y QUESILLO', 66, 'Hamburguesa con tocino y quesillo')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">DOBLE HAWAIANA</div>
+                        <div class="item-price">$68</div>
+                    </div>
+                    <div class="item-description">2 carnes, catsup, mostaza, picante, queso oaxaca, pi帽a, queso amarillo, jam贸n, mayonesa, jitomate, pepinillo</div>
+                    <button class="add-to-cart" onclick="addToCart('DOBLE HAWAIANA', 68, 'Doble hawaiana con dos carnes')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">DOBLE CON QUESO</div>
+                        <div class="item-price">$78</div>
+                    </div>
+                    <div class="item-description">2 carnes, picante, cebolla, lechuga, jitomate, pepinillos, queso oaxaca, catsup, mostaza, queso amarillo, jam贸n, mayonesa</div>
+                    <button class="add-to-cart" onclick="addToCart('DOBLE CON QUESO', 78, 'Doble hamburguesa con queso')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">ARNOLD DOBLE</div>
+                        <div class="item-price">$82</div>
+                    </div>
+                    <div class="item-description">2 carnes, jam贸n, mayonesa, queso amarillo, queso oaxaca, salchicha, tocino, catsup</div>
+                    <button class="add-to-cart" onclick="addToCart('ARNOLD DOBLE', 82, 'Doble Arnold con salchicha y tocino')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">DOBLE CON TOCINO Y QUESO</div>
+                        <div class="item-price">$83</div>
+                    </div>
+                    <div class="item-description">2 carnes, jam贸n, mayonesa, queso amarillo, queso oaxaca, tocino, catsup, mostaza, picante, cebolla, lechuga, jitomate, pepinillos</div>
+                    <button class="add-to-cart" onclick="addToCart('DOBLE CON TOCINO Y QUESO', 83, 'Doble con tocino y queso')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">DOBLE CARNE</div>
+                        <div class="item-price">$86</div>
+                    </div>
+                    <div class="item-description">2 carnes, jam贸n, mayonesa, queso amarillo, catsup, mostaza, cebolla, picante, lechuga, jitomate, pepinillo</div>
+                    <button class="add-to-cart" onclick="addToCart('DOBLE CARNE', 86, 'Doble carne especial')">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HAMBURGUESAS DE POLLO -->
+        <div class="menu-section">
+            <h2 class="section-title">馃悢 HAMBURGUESAS DE POLLO</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">SENCILLA DE POLLO</div>
+                        <div class="item-price">$42</div>
+                    </div>
+                    <div class="item-description">Pollo, jam贸n, mayonesa, queso amarillo, catsup, mostaza</div>
+                    <button class="add-to-cart" onclick="addToCart('SENCILLA DE POLLO', 42, 'Hamburguesa de pollo sencilla')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">POLLO CON QUESO</div>
+                        <div class="item-price">$56</div>
+                    </div>
+                    <div class="item-description">Pollo, lechuga, cebolla, catsup, mostaza, picante, queso amarillo, queso oaxaca, jam贸n, mayonesa</div>
+                    <button class="add-to-cart" onclick="addToCart('POLLO CON QUESO', 56, 'Hamburguesa de pollo con queso')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">HAWAIANA DE POLLO</div>
+                        <div class="item-price">$66</div>
+                    </div>
+                    <div class="item-description">Pollo, cebolla, jitomate, lechuga, mostaza, pepinillos, picante, queso oaxaca, pi帽a, catsup, jam贸n, mayonesa, queso amarillo</div>
+                    <button class="add-to-cart" onclick="addToCart('HAWAIANA DE POLLO', 66, 'Hamburguesa hawaiana de pollo')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">DOBLE HAWAIANA DE POLLO</div>
+                        <div class="item-price">$75</div>
+                    </div>
+                    <div class="item-description">Doble pollo, lechuga, jitomate, pepinillos, catsup, mostaza, picante, cebolla, queso amarillo, queso oaxaca, jam贸n, mayonesa</div>
+                    <button class="add-to-cart" onclick="addToCart('DOBLE HAWAIANA DE POLLO', 75, 'Doble hawaiana de pollo')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">TOCINO Y QUESO DE POLLO</div>
+                        <div class="item-price">$80</div>
+                    </div>
+                    <div class="item-description">Pollo, lechuga, jitomate, pepinillos, mostaza, picante, cebolla, queso oaxaca, tocino, catsup, queso amarillo, jam贸n, mayonesa</div>
+                    <button class="add-to-cart" onclick="addToCart('TOCINO Y QUESO DE POLLO', 80, 'Pollo con tocino y queso')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">DOBLE POLLO</div>
+                        <div class="item-price">$80</div>
+                    </div>
+                    <div class="item-description">Doble pollo, lechuga, jitomate, pepinillos, picante, cebolla, pollo, catsup, mostaza, queso amarillo, jam贸n, mayonesa</div>
+                    <button class="add-to-cart" onclick="addToCart('DOBLE POLLO', 80, 'Doble hamburguesa de pollo')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">ARNOLD DE POLLO</div>
+                        <div class="item-price">$90</div>
+                    </div>
+                    <div class="item-description">Pollo, lechuga, jitomate, pepinillos, picante, cebolla, tocino, catsup, mostaza, queso amarillo, queso oaxaca, jam贸n, mayonesa</div>
+                    <button class="add-to-cart" onclick="addToCart('ARNOLD DE POLLO', 90, 'Arnold especial de pollo')">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOT DOGS -->
+        <div class="menu-section">
+            <h2 class="section-title">馃尛 HOT DOGS</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">SENCILLO</div>
+                        <div class="item-price">$18</div>
+                    </div>
+                    <div class="item-description">Salchicha, mayonesa, catsup, mostaza, cebolla, jitomate, picante</div>
+                    <button class="add-to-cart" onclick="addToCart('HOT DOG SENCILLO', 18, 'Hot dog sencillo')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">TOCINO</div>
+                        <div class="item-price">$28</div>
+                    </div>
+                    <div class="item-description">Salchicha, mayonesa, catsup, mostaza, tocino, cebolla, jitomate, picante</div>
+                    <button class="add-to-cart" onclick="addToCart('HOT DOG TOCINO', 28, 'Hot dog con tocino')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">HAWAIANO</div>
+                        <div class="item-price">$28</div>
+                    </div>
+                    <div class="item-description">Salchicha, mayonesa, catsup, mostaza, jam贸n, pi帽a, queso oaxaca, cebolla, jitomate, picante</div>
+                    <button class="add-to-cart" onclick="addToCart('HOT DOG HAWAIANO', 28, 'Hot dog hawaiano')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">QUESILLO</div>
+                        <div class="item-price">$37</div>
+                    </div>
+                    <div class="item-description">Salchicha, mayonesa, catsup, mostaza, queso oaxaca, cebolla, jitomate, picante</div>
+                    <button class="add-to-cart" onclick="addToCart('HOT DOG QUESILLO', 37, 'Hot dog con quesillo')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">TOCINO Y QUESILLO</div>
+                        <div class="item-price">$38</div>
+                    </div>
+                    <div class="item-description">Salchicha, mayonesa, catsup, mostaza, tocino, queso oaxaca, cebolla, jitomate, picante</div>
+                    <button class="add-to-cart" onclick="addToCart('HOT DOG TOCINO Y QUESILLO', 38, 'Hot dog con tocino y quesillo')">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAPAS -->
+        <div class="menu-section">
+            <h2 class="section-title">馃崯 PAPAS Y EXTRAS</h2>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">PAPAS SENCILLAS</div>
+                        <div class="item-price">$40</div>
+                    </div>
+                    <div class="item-description">Papas fritas sencillas</div>
+                    <button class="add-to-cart" onclick="addToCart('PAPAS SENCILLAS', 40, 'Papas fritas sencillas')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">CON QUESO OAXACA</div>
+                        <div class="item-price">$50</div>
+                    </div>
+                    <div class="item-description">Papas con queso oaxaca</div>
+                    <button class="add-to-cart" onclick="addToCart('PAPAS CON QUESO OAXACA', 50, 'Papas con queso oaxaca')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">PAPAS CON CARNE</div>
+                        <div class="item-price">$55</div>
+                    </div>
+                    <div class="item-description">Papas con carne</div>
+                    <button class="add-to-cart" onclick="addToCart('PAPAS CON CARNE', 55, 'Papas con carne')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">SALCHIPAPA</div>
+                        <div class="item-price">$55</div>
+                    </div>
+                    <div class="item-description">Papas con salchicha</div>
+                    <button class="add-to-cart" onclick="addToCart('SALCHIPAPA', 55, 'Papas con salchicha')">Agregar al carrito</button>
+                </div>
+
+                <div class="menu-item">
+                    <div class="item-header">
+                        <div class="item-name">NUGGETS</div>
+                        <div class="item-price">$56</div>
+                    </div>
+                    <div class="item-description">Nuggets de pollo</div>
+                    <button class="add-to-cart" onclick="addToCart('NUGGETS', 56, 'Nuggets de pollo')">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HORARIOS -->
+        <div class="menu-section">
+            <h2 class="section-title">鈴?HORARIOS DE ATENCI脫N</h2>
+            <div style="text-align: center; font-size: 1.2rem; color: #FF6B1A;">
+                <p><strong>LUNES A DOMINGO</strong></p>
+                <p><strong>5:00 PM - 10:30 PM</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="color: #FF6B1A; text-align: center;">Iniciar Sesi贸n</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="loginEmail" placeholder="Ingresa tu email">
+            </div>
+            <div class="form-group">
+                <label>Contrase帽a:</label>
+                <input type="password" id="loginPassword" placeholder="Ingresa tu contrase帽a">
+            </div>
+            <button class="btn" style="width: 100%;" onclick="login()">Iniciar Sesi贸n</button>
+        </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('cartModal')">&times;</span>
+            <h2 style="color: #FF6B1A; text-align: center;">馃洅 Carrito de Compras</h2>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="total" id="cartTotal">Total: $0</div>
+            <button class="btn" style="width: 100%;" onclick="showCheckout()">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <!-- Modal de Checkout -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('checkoutModal')">&times;</span>
+            <h2 style="color: #FF6B1A; text-align: center;">馃挸 Finalizar Compra</h2>
+            
+            <div class="form-group">
+                <label>Nombre del Cliente:</label>
+                <input type="text" id="customerName" placeholder="Ingresa tu nombre completo" required>
+            </div>
+
+            <div class="form-group">
+                <label>Tel茅fono:</label>
+                <input type="tel" id="customerPhone" placeholder="Ingresa tu tel茅fono" required>
+            </div>
+
+            <div class="form-group">
+                <label>Direcci贸n de Entrega:</label>
+                <input type="text" id="customerAddress" placeholder="Ingresa tu direcci贸n" required>
+            </div>
+
+            <div class="form-group">
+                <label>M茅todo de Pago:</label>
+                <select id="paymentMethod" onchange="showPaymentDetails()">
+                    <option value="">Selecciona m茅todo de pago</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="transferencia">Transferencia Interbancaria</option>
+                </select>
+            </div>
+
+            <div id="paymentDetails" class="payment-details" style="display: none;"></div>
+
+            <div class="total" id="checkoutTotal">Total: $0</div>
+            
+            <button class="btn" style="width: 100%;" onclick="processOrder()">Confirmar Pedido</button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmaci贸n -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('confirmationModal')">&times;</span>
+            <h2 style="color: #32CD32; text-align: center;">鉁?隆Pedido Confirmado!</h2>
+            <div id="orderDetails"></div>
+            <div class="order-number" id="orderNumber"></div>
+            <p style="text-align: center; margin-top: 1rem;">
+                <strong>Tiempo estimado de entrega: 30-45 minutos</strong>
+            </p>
+            <button class="btn" style="width: 100%;" onclick="newOrder()">Realizar Nuevo Pedido</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function addToCart(name, price, description) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name: name,
+                    price: price,
+                    description: description,
+                    quantity: 1
+                });
+            }
+            updateCartDisplay();
+        }
+
+        function removeFromCart(name) {
+            cart = cart.filter(item => item.name !== name);
+            updateCartDisplay();
+        }
+
+        function updateQuantity(name, change) {
+            const item = cart.find(item => item.name === name);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(name);
+                } else {
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const checkoutTotal = document.getElementById('checkoutTotal');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            cartCount.textContent = totalItems;
+            cartTotal.textContent = `Total: ${total}`;
+            if (checkoutTotal) checkoutTotal.textContent = `Total: ${total}`;
+
+            cartItems.innerHTML = '';
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${item.price} c/u</small>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity('${item.name}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity('${item.name}', 1)">+</button>
+                        <button class="quantity-btn" style="background: #FF0000; margin-left: 10px;" onclick="removeFromCart('${item.name}')">馃棏锔?/button>
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+        }
+
+        function showLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function showCart() {
+            if (cart.length === 0) {
+                alert('Tu carrito est谩 vac铆o');
+                return;
+            }
+            document.getElementById('cartModal').style.display = 'block';
+        }
+
+        function showCheckout() {
+            if (cart.length === 0) {
+                alert('Tu carrito est谩 vac铆o');
+                return;
+            }
+            closeModal('cartModal');
+            document.getElementById('checkoutModal').style.display = 'block';
+            document.getElementById('checkoutTotal').textContent = `Total: ${total}`;
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (email && password) {
+                alert('隆Bienvenido a Hamburguesas Arnold!');
+                closeModal('loginModal');
+            } else {
+                alert('Por favor completa todos los campos');
+            }
+        }
+
+        function showPaymentDetails() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const paymentDetails = document.getElementById('paymentDetails');
+
+            if (paymentMethod === 'efectivo') {
+                paymentDetails.innerHTML = `
+                    <h4>馃挼 Pago en Efectivo</h4>
+                    <p>El pago se realizar谩 al momento de la entrega.</p>
+                    <div class="form-group">
+                        <label>驴Con cu谩nto vas a pagar?</label>
+                        <input type="number" id="cashAmount" placeholder="Cantidad en efectivo" min="${total}">
+                    </div>
+                `;
+                paymentDetails.style.display = 'block';
+            } else if (paymentMethod === 'tarjeta') {
+                paymentDetails.innerHTML = `
+                    <h4>馃挸 Pago con Tarjeta</h4>
+                    <div class="form-group">
+                                </div>
+                `;
+                paymentDetails.style.display = 'block';
+            } else if (paymentMethod === 'transferencia') {
+                paymentDetails.innerHTML = `
+                    <h4>馃彟 Transferencia Interbancaria</h4>
+                    <div style="background: #f0f8ff; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <p><strong>Datos para la transferencia:</strong></p>
+                        <p><strong>Beneficiario:</strong> Marcos Guzm谩n Rodr铆guez</p>
+                        <p><strong>CLABE:</strong> 012180001234567890</p>
+                        <p><strong>Banco:</strong> BBVA M茅xico</p>
+                        <p><strong>Monto:</strong> ${total}.00</p>
+                    </div>
+                    <div class="form-group">
+                        <label>N煤mero de Referencia de la Transferencia:</label>
+                        <input type="text" id="transferReference" placeholder="Ingresa el n煤mero de referencia" required>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #666;">
+                        <strong>Importante:</strong> Env铆a el comprobante de transferencia junto con tu pedido.
+                    </p>
+                `;
+                paymentDetails.style.display = 'block';
+            } else {
+                paymentDetails.style.display = 'none';
+            }
+        }
+
+        function generateOrderNumber() {
+            const now = new Date();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const randomChars = Math.random().toString(36).substring(2, 5).toUpperCase();
+            return minutes + randomChars;
+        }
+
+        function processOrder() {
+    const customerName = document.getElementById('customerName').value;
+    const customerPhone = document.getElementById('customerPhone').value;
+    const customerAddress = document.getElementById('customerAddress').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
+
+    if (!customerName || !customerPhone || !customerAddress || !paymentMethod) {
+        alert('Por favor completa todos los campos requeridos');
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert('Tu carrito está vacío');
+        return;
+    }
+
+    if (paymentMethod === 'transferencia') {
+        const transferReference = document.getElementById('transferReference').value;
+        if (!transferReference) {
+            alert('Por favor ingresa el número de referencia de la transferencia');
+            return;
+        }
+    }
+
+    const orderNumber = generateOrderNumber();
+
+    // Crear mensaje de WhatsApp
+    let paymentText = '';
+    switch(paymentMethod) {
+        case 'efectivo': paymentText = 'Efectivo (Pago contra entrega)'; break;
+        case 'tarjeta': paymentText = 'Tarjeta de Crédito/Débito'; break;
+        case 'transferencia': paymentText = 'Transferencia Interbancaria'; break;
+    }
+
+    let message = `*Nueva Orden Hamburguesas Arnold*\n\n`;
+    message += `*Numero de orden:* ${orderNumber}\n`;
+    message += `*Cliente:* ${customerName}\n`;
+    message += `*Telefono:* ${customerPhone}\n`;
+    message += `*Direccion:* ${customerAddress}\n`;
+    message += `*Metodo de Pago:* ${paymentText}\n`;
+    message += `*Productos:*\n`;
+
+    cart.forEach(item => {
+        message += `- ${item.name} x${item.quantity} = $${item.price * item.quantity}\n`;
+    });
+
+    message += `\n*?? Total: $${total}*\n`;
+
+    if (paymentMethod === 'transferencia') {
+        const transferReference = document.getElementById('transferReference').value;
+        message += `*?? Referencia de Transferencia:* ${transferReference}\n`;
+    }
+
+    // Codificar y abrir WhatsApp
+    const phoneNumber = '525582121109';
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank');
+
+    // Mostrar confirmación
+    showOrderConfirmation(orderNumber, customerName, customerPhone, customerAddress, paymentMethod);
+
+
+            // Limpiar carrito
+            cart = [];
+            updateCartDisplay();
+            
+            closeModal('checkoutModal');
+        }
+
+        function showOrderConfirmation(orderNumber, customerName, customerPhone, customerAddress, paymentMethod) {
+            const orderDetails = document.getElementById('orderDetails');
+            const orderNumberDiv = document.getElementById('orderNumber');
+
+            let paymentText = '';
+            switch(paymentMethod) {
+                case 'efectivo':
+                    paymentText = 'Efectivo (Pago contra entrega)';
+                    break;
+                case 'tarjeta':
+                    paymentText = 'Tarjeta de Cr茅dito/D茅bito';
+                    break;
+                case 'transferencia':
+                    paymentText = 'Transferencia Interbancaria';
+                    break;
+            }
+
+            orderDetails.innerHTML = `
+                <div style="background: rgba(255,255,255,0.8); padding: 1.5rem; border-radius: 10px; margin: 1rem 0;">
+                    <h3 style="color: #FF6B1A; margin-bottom: 1rem;">Detalles del Pedido</h3>
+                    <p><strong>Cliente:</strong> ${customerName}</p>
+                    <p><strong>Tel茅fono:</strong> ${customerPhone}</p>
+                    <p><strong>Direcci贸n:</strong> ${customerAddress}</p>
+                    <p><strong>M茅todo de Pago:</strong> ${paymentText}</p>
+                    <p><strong>Total:</strong> ${total}</p>
+                    
+                    <h4 style="color: #FF6B1A; margin: 1rem 0;">Productos:</h4>
+                    ${cart.map(item => `
+                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0; padding: 0.5rem; background: rgba(255,255,255,0.5); border-radius: 5px;">
+                            <span>${item.name} x${item.quantity}</span>
+                            <span>${item.price * item.quantity}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            orderNumberDiv.textContent = `N煤mero de Orden: ${orderNumber}`;
+            document.getElementById('confirmationModal').style.display = 'block';
+        }
+
+        function newOrder() {
+            closeModal('confirmationModal');
+            cart = [];
+            updateCartDisplay();
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            document.getElementById('customerAddress').value = '';
+            document.getElementById('paymentMethod').value = '';
+            document.getElementById('paymentDetails').style.display = 'none';
+        }
+
+        // Cerrar modales al hacer clic fuera de ellos
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Formatear entrada de tarjeta
+        document.addEventListener('input', function(e) {
+            if (e.target.placeholder === '1234 5678 9012 3456') {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                e.target.value = formattedValue;
+            }
+            
+            if (e.target.placeholder === 'MM/AA') {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0,2) + '/' + value.substring(2,4);
+                }
+                e.target.value = value;
+            }
+        });
+
+        // Inicializar display del carrito
+        updateCartDisplay();
+    </script>
+</body>
+</html>
